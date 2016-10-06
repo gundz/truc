@@ -80,7 +80,6 @@ float			vec_mult_chelou(vecteur v1, vecteur v2)
 
    //float D = (B * B) - (dist * dist) + s.size * s.size;
    float D = (B * B) - vec_mult_chelou(dist, dist) + s.size * s.size;
-   
 
    if (D < 0.0f)
 	 return false;
@@ -163,7 +162,8 @@ float			vec_mult_chelou(vecteur v1, vecteur v2)
 
 		 material currentMat = myScene.matTab[myScene.sphTab[currentSphere].material];
 
-		 // calcul de la valeur d'éclairement au point
+
+		 // calcul de la valeur d'Ã©clairement au point
 		 for (unsigned int j = 0; j < myScene.lgtTab.size(); ++j)
 		 {
 		   light current = myScene.lgtTab[j];
@@ -196,7 +196,7 @@ float			vec_mult_chelou(vecteur v1, vecteur v2)
 			 blue += lambert * current.blue * currentMat.blue;
 		   }
 		 }
-		 // on itére sur la prochaine reflexion
+		 // on itÃ©re sur la prochaine reflexion
 		 coef *= currentMat.reflection;
 		 float reflet = 2.0f * (viewRay.dir * n);
 		 viewRay.start = newStart;

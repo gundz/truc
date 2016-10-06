@@ -1,5 +1,6 @@
 #CONFIG
 	SRCS =			main.c \
+					vec_tools.c \
 
 	NAME =			a.out
 
@@ -7,7 +8,7 @@
 
 	EXTENTION =		c
 
-	CFLAGS = 		-Wall -Werror -Wextra
+	CFLAGS = 		
 
 #ADVANCED CONFIG
 	SRC_PATH =		./srcs/
