@@ -1,0 +1,4 @@
+Sitemap: http://sirens.rocks/sitemap.xml
+User-Agent: GoogleBot
+Disallow: /*.mp3
+Disallow: /*.torrent
