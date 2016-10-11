@@ -16,6 +16,7 @@ t_vec				set_vec(float x, float y, float z);
 t_vec				vec_sub(t_vec v1, t_vec v2);
 
 t_vec				vec_add(t_vec v1, t_vec v2);
+t_vec				vec_add_f(t_vec v1, float value);
 
 t_vec				vec_mult_f(t_vec v, float f);
 

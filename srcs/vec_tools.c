@@ -30,6 +30,16 @@ t_vec				vec_add(t_vec v1, t_vec v2)
 	return (ret);
 }
 
+t_vec				vec_add_f(t_vec v1, float value)
+{
+	t_vec			ret;
+
+	ret.x = v1.x + value;
+	ret.y = v1.y + value;
+	ret.z = v1.z + value;
+	return (ret);
+}
+
 t_vec         vec_mult_f(t_vec v, float f)
 {
     t_vec     ret;

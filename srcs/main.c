@@ -29,6 +29,11 @@ typedef struct			s_data
 	SDL_Surface			*surf;
 }						t_data;
 
+typedef struct			s_material {
+  float specValue;
+  float specPower;
+}						t_material;
+
 #define SUPERSAMPLING
 
 t_sphere		set_sphere(t_vec pos, float radius, t_vec surf_color)
@@ -100,6 +105,38 @@ int					hitsphere(t_vec rayorig, t_vec raydir, t_sphere sphere, float *t0, float
 	return (1);
 }
 
+float			calculateLambert(t_vec phit, t_vec nhit, t_sphere light)
+{
+	t_vec		lightDirection;
+
+	lightDirection = vec_sub(light.pos, phit);
+	lightDirection = vec_normalize(lightDirection);
+	return (max(0.0f, dot_product(lightDirection, nhit)));
+}
+
+float calculatePhong(t_vec sphereCenter, t_vec intersection, t_vec lightPosition, t_vec rayOrigin)
+{
+	t_material sphereMaterial = { 5.0, 100.0 };
+
+	t_vec sphereNormal = vec_sub(intersection, sphereCenter);
+	sphereNormal = vec_normalize(sphereNormal);
+
+
+	t_vec lightDirection = vec_sub(lightPosition, intersection);
+	lightDirection = vec_normalize(lightDirection);
+
+
+	t_vec viewDirection = vec_sub(intersection, rayOrigin);
+	viewDirection = vec_normalize(viewDirection);
+
+
+	t_vec blinnDirection = vec_sub(lightDirection, viewDirection);
+	blinnDirection = vec_normalize(blinnDirection);
+
+	float blinnTerm = max(dot_product(blinnDirection, sphereNormal), 0.0f);
+	return sphereMaterial.specValue * powf(blinnTerm, sphereMaterial.specPower);
+}
+
 int				raytrace(t_vec rayorig, t_vec raydir, t_data *data)
 {
 	float		tnear;
@@ -138,6 +175,7 @@ int				raytrace(t_vec rayorig, t_vec raydir, t_data *data)
 			int transmission = 1;
 			t_vec lightDirection = vec_sub(data->spheres.spheres[i].pos, phit);
 			lightDirection = vec_normalize(lightDirection);
+
 			for (unsigned j = 0; j < data->spheres.nb_spheres; j++)
 			{
 				if (i != j)
@@ -149,20 +187,23 @@ int				raytrace(t_vec rayorig, t_vec raydir, t_data *data)
 				    }
 				}
 			}
-			/*
-			surface_color.x += sphere->surf_color.x * transmission * max(0.0f, dot_product(nhit,
-				lightDirection)) * data->spheres.spheres[i].emis_color.x;
 
-			surface_color.y += sphere->surf_color.y * transmission * max(0.0f, dot_product(nhit, lightDirection)) * data->spheres.spheres[i].emis_color.y;
+			if (transmission == 1)
+			{
+			float lambert = calculateLambert(phit, nhit, data->spheres.spheres[i]);
+			float phongTerm = calculatePhong(sphere->pos, phit, data->spheres.spheres[i].pos, rayorig);
 
-			surface_color.z += sphere->surf_color.z * transmission * max(0.0f, dot_product(nhit, lightDirection)) * data->spheres.spheres[i].emis_color.z;
-			*/
+//float calculatePhong(t_vec sphereCenter, t_vec intersection, t_vec lightPosition, t_vec rayOrigin)
 
-			surface_color = vec_mult(vec_mult_f(vec_mult_f(sphere->surf_color, transmission), max(0.0f, dot_product(nhit, lightDirection))), data->spheres.spheres[i].emis_color);
+			surface_color = vec_add(vec_mult_f(sphere->surf_color, lambert),
+			vec_mult_f(sphere->surf_color, phongTerm));
+			}
+
+			//surface_color = vec_mult(vec_mult_f(vec_mult_f(sphere->surf_color, transmission), max(0.0f, dot_product(nhit, lightDirection))), data->spheres.spheres[i].emis_color);
 		}
 	}
 
-	surface_color = vec_add(surface_color, sphere->emis_color);
+	//surface_color = vec_add(surface_color, sphere->emis_color);
 
 	float red = min(1.0f, surface_color.x) * 255;
 	float green = min(1.0f, surface_color.y) * 255;
